@@ -1,0 +1,15 @@
+<language-addon>
+    <addon-name>filter</addon-name>
+  	<version>
+		<version-class>org.zkoss.addon.filter.Version</version-class>
+		<version-uid>0.6.0</version-uid>
+		<zk-version>6.5.3</zk-version><!-- or later -->
+	</version>
+    
+	<language-name>xul/html</language-name>
+	<component>
+		<component-name>filterpopup</component-name> <!-- required -->
+		<component-class>org.zkoss.addon.filter.Filterpopup</component-class> <!-- required -->
+		<extends>popup</extends>
+	</component>
+</language-addon>

@@ -1,0 +1,130 @@
+<zk>
+	
+	<tabbox vflex="true">
+		<tabs>
+			<tab label="MVC"></tab>
+			<tab label="MVVM"></tab>
+		</tabs>
+		<tabpanels>
+			<!-- MVC demo -->
+			<tabpanel>
+				<hlayout vflex="true">
+					<window title="Default" border="normal" apply="demo.FilterpopupCtrl" hflex="1" vflex="true">
+						<hlayout>
+							<groupbox>
+								<caption label="Sort"></caption>
+								<radiogroup>
+									<radio id="ascending" label="Ascending"></radio>
+									<radio id="descending" label="Descending"></radio>
+								</radiogroup>
+							</groupbox>
+							<groupbox>
+								<caption label="Filter"></caption>
+								<radiogroup>
+									<radio id="contains" label="Contains..." checked="true"></radio>
+									<radio id="beginsWith" label="Begins with..."></radio>
+								</radiogroup>
+							</groupbox>
+							<vlayout>
+								<button id="clearBtn" label="Clear" vflex="true" disabled="true"></button>
+								<button id="btn" label="Filter" vflex="true"></button>
+							</vlayout>
+						</hlayout>
+						<filterpopup id="popup" width="300px" height="400px"></filterpopup>
+						<separator></separator>
+						<grid id="grid" vflex="true">
+							<columns>
+								<column label="Name"></column>
+							</columns>
+						</grid>	
+					</window>
+					<window title="Custom View" border="normal" hflex="1" apply="demo.CustomFilterpopupCtrl" vflex="true">
+						<caption>
+							<button id="btn" label="Filter" vflex="true"></button>
+							<filterpopup id="filterpopup" width="300px" height="400px">
+								<template name="top">
+									<vlayout>
+										<radiogroup>
+											<radio label="Contains..."
+												onCheck="@command('setFilter', filter=ContainsStringFilter)" 
+												checked="true">
+											</radio>
+											<radio label="Begins with..."
+												onCheck="@command('setFilter', filter=StartWithStringFilter)">
+											</radio>
+										</radiogroup>
+
+										<textbox value="@bind(vm.constraint)" instant="true" onChanging="@command('performFiltering', constraint=event.value)"></textbox>
+										<checkbox checked="@load(vm.selectAll)" label="(Select All)" onCheck="@command('selectAll', checked=event.checked)"></checkbox>
+									</vlayout>
+								</template>
+							</filterpopup>
+						</caption>
+						<grid id="grid" vflex="true">
+							<columns>
+								<column label="Name"></column>
+							</columns>
+						</grid>	
+					</window>
+				</hlayout>
+			</tabpanel>
+			<!-- MVVM demo -->
+			<tabpanel apply="org.zkoss.bind.BindComposer"
+					viewModel="@id('vm') @init('demo.ProfileViewModel')">
+				<grid model="@load(vm.profiles)">
+					<auxhead>
+						<auxheader colspan="3" align="right">
+							<button label="Clear Filter" disabled="@load(not vm.filtered)" 
+								onClick="@command('clearFilter')"></button>
+							<button label="Date Filter" 
+								onClick="@command('open', filter=dateFilter, ref=self)"></button>
+							<filterpopup id="dateFilter" model="@load(vm.profiles)"
+								onFilter="@command('setProfiles', model=event.filtered)"
+								filter="@load(vm.afterDateFilter)"
+								afterDateFilter="@ref(vm.afterDateFilter)"
+								beforeDateFilter="@ref(vm.beforeDateFilter)"
+								comparator="@init(vm.profileDateComparator)" width="300px" height="400px">
+								<template name="top">
+									<radiogroup>
+										<radio label="After Date" checked="true" onCheck="@command('setFilter', filter=afterDateFilter)"></radio>
+										<radio label="Before Date" onCheck="@command('setFilter', filter=beforeDateFilter)"></radio>
+										<datebox value="@bind(vm.constraint)" 
+												onChange="@command('performFiltering', constraint=self.value)"></datebox>
+									</radiogroup>
+								</template>
+								<template name="head">
+									 <listhead>
+							            <listheader label="Name"/>
+							            <listheader label="Birth"/>
+							        </listhead>
+								</template>
+								<template name="model">
+									<listitem>
+										<listcell label="@load(each.name)" />
+										<listcell label="@load(each.birth)" />
+									</listitem>
+								</template>
+							</filterpopup>
+						</auxheader>
+					</auxhead>
+					<columns>
+						<column label="Name"></column>
+						<column label="Birth"></column>
+						<column label="Married"></column>
+					</columns>
+					<template name="model" var="profile">
+						<row>
+							<label value="@load(profile.name)"></label>
+							<datebox value="@load(profile.birth)"
+								onChange="@command('setBirth', profile=profile, birth=event.target.value)">
+							</datebox>
+							<checkbox checked="@load(profile.married)" 
+								onCheck="@command('setMarried', profile=profile, married=event.checked)" label="Married">
+							</checkbox>
+						</row>
+					</template>
+				</grid>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+</zk>
