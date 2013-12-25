@@ -2,9 +2,7 @@ package demo;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
 
 import org.zkoss.addon.filter.FilterEvent;
 import org.zkoss.addon.filter.Filterpopup;
@@ -31,11 +29,13 @@ public class FilterpopupCtrl extends SelectorComposer<Component> {
 	@Wire
 	Grid grid;
 	
+	private ArrayList<String> list;
+	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		ArrayList list = Names.get();
+		list = Names.get();
 		
 		popup.setModel(list);
 		popup.setFilter(FilterImpl.ContainsStringFilter);
@@ -50,6 +50,7 @@ public class FilterpopupCtrl extends SelectorComposer<Component> {
 	@Listen("onClick=#clearBtn")
 	public void clearFiltered() throws IOException {
 		grid.setModel(new ListModelList(Names.get()));
+		popup.setModel(list);
 		popup.setFiltered(null);
 		clearBtn.setDisabled(true);
 	}

@@ -1,5 +1,8 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:n="native">
+	<style>
+	.no-paging-info .z-paging-info { display: none; }
+	</style>
 	<vlayout
 		apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('org.zkoss.addon.filter.impl.FilterpopupViewModel')"
@@ -12,7 +15,7 @@
 		</div>
 		<div id="center" vflex="true">
 			<custom-attributes org.zkoss.zul.listbox.rod="true"/>
-			<listbox id="listbox" checkmark="true" model="@bind(vm.filteredByConstraintModel)" vflex="true">
+			<listbox id="listbox" checkmark="true" model="@bind(vm.filteredByConstraintModel)" vflex="true" mold="paging" sclass="no-paging-info">
 				<template name="model">
 					<listitem>
 						<listcell label="@load(each)" />
