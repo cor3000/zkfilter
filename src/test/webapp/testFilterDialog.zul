@@ -1,0 +1,43 @@
+<vlayout apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('demo.TestFilterDialogViewModel')">
+	<listbox model="@load(vm.model)">
+		<listhead>
+			<listheader label="Number">
+				<filterConfig 
+					model="${vm.numberFilterModel}" 
+					onFilterChanged="@command('applyFilter', model=event.data)"				
+					onFilterCleared="@command('clearFilter', model=event.data)"/>
+			</listheader>
+			<listheader label="String">
+				<filterConfig 
+					model="${vm.stringFilterModel}" 
+					onFilterChanged="@command('applyFilter', model=event.data)"
+					onFilterCleared="@command('clearFilter', model=event.data)"/>	
+			</listheader>
+		</listhead>
+		<template name="model" var="item">
+			<listitem>
+				<listcell label="@load(item.number)"/>
+				<listcell label="@load(item.name)"/>
+			</listitem>
+		</template>
+	</listbox>
+	<!-- 
+	<grid model="@load(vm.model)">
+		<columns menupopup="auto">
+			<column label="Number" sort="auto">
+				<filterConfig type="number"/>
+			</column>
+			<column label="String" sort="auto">
+				<filterConfig type="string"/>
+			</column>			
+		</columns>
+		<template name="model" var="item">
+			<row>
+				<cell><label value="@load(item.number)"/></cell>
+				<cell><label value="@load(item.name)"/></cell>
+			</row>
+		</template>
+	</grid>	
+	 -->
+</vlayout>
