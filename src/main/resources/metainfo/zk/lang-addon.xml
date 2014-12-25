@@ -2,14 +2,21 @@
     <addon-name>filter</addon-name>
   	<version>
 		<version-class>org.zkoss.addon.filter.Version</version-class>
-		<version-uid>0.6.0</version-uid>
-		<zk-version>6.5.3</zk-version><!-- or later -->
+		<version-uid>1.0.0</version-uid>
+		<zk-version>7.0.4</zk-version><!-- or later -->
 	</version>
     
-	<language-name>xul/html</language-name>
+	<language-name>xul/html</language-name>	
 	<component>
-		<component-name>filterpopup</component-name> <!-- required -->
-		<component-class>org.zkoss.addon.filter.Filterpopup</component-class> <!-- required -->
-		<extends>popup</extends>
+		<component-name>filterConfig</component-name>
+		<macro-uri>~./zul/filterConfig.zul</macro-uri>
+		<annotation>
+			<annotation-name>ZKBIND</annotation-name>
+			<property-name>model</property-name>
+			<attribute>
+				<attribute-name>ACCESS</attribute-name>
+				<attribute-value>both</attribute-value>
+			</attribute>
+		</annotation>
 	</component>
 </language-addon>

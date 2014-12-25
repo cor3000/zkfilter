@@ -1,0 +1,27 @@
+<popup id="${model.filterId}_popup" style="border: 1px solid black;">
+	<vlayout width="300px" vflex="min">
+		<toolbarbutton label="Clear" forward="onClick = onFilterCleared(${model})"/>
+		<hlayout>
+			<combobox readonly="true" model="@load(model.ruleNames)" value="@bind(model.rule.name)">
+				<template name="model" var="ruleName">
+					<comboitem label="@load(ruleName)" value="@load(ruleName)"/>
+				</template>				
+			</combobox>
+			<textbox value="@bind(model.rule.value)"/>
+		</hlayout>
+		<listbox checkmark="true" height="150px" model="@bind(model.distinctValues)" visible="@load(not empty model.distinctValues)">
+			<custom-attributes org.zkoss.zul.listbox.rod="false" />
+			<custom-attributes org.zkoss.zul.nativebar="true" />
+			<listhead>
+				<listheader label="(Select all)" />
+			</listhead>
+			<template name="model">
+				<listitem label="@load(each)"/>
+			</template>
+		</listbox>
+		<hlayout height="26px">
+			<button label="OK" forward="onClick = onFilterChanged(${model})" onClick='self.parent.parent.parent.close()'/>
+			<button label="Cancel"/>
+		</hlayout>
+	</vlayout>
+</popup>
