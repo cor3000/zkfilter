@@ -17,5 +17,5 @@ package org.zkoss.addon.filter;
 public class Version {
 	/** Returns the version UID.
 	 */
-	public static final String UID = "0.6.0";
+	public static final String UID = "1.0.0";
 }
