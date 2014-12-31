@@ -1,20 +1,36 @@
 package org.zkoss.addon.filter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanPredicate;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.collections.functors.EqualPredicate;
+import org.apache.commons.collections.functors.NotPredicate;
 import org.zkoss.addon.filter.impl.BeginPredicate;
+import org.zkoss.addon.filter.impl.ContainPredicate;
+import org.zkoss.addon.filter.impl.EndPredicate;
 import org.zkoss.addon.filter.impl.GreaterPredicate;
+import org.zkoss.addon.filter.impl.LessPredicate;
 import org.zkoss.addon.filter.impl.MemberPredicate;
+import org.zkoss.addon.filter.impl.NumberEqualPredicate;
 import org.zkoss.zul.ListModelList;
 
 public class MemoryFilterUtils {
 	
-	public static Predicate createCombinedFilterPredicate(Set<FilterModel> activeFilterModels) {
+	@SuppressWarnings("unchecked")
+    public static <E extends Comparable<E>> Set<E> getDistinctValues(List<?> beanList, String propertyName) {
+		return new TreeSet<E>(
+			CollectionUtils.collect(beanList, new BeanToPropertyValueTransformer(propertyName)));
+	}
+	
+	public static Predicate createCombinedFilterPredicate(Set<FilterModel<?>> activeFilterModels) {
 	    ArrayList<BeanPredicate> predicateList = new ArrayList<BeanPredicate>();
 		for (FilterModel<?> filterModel : activeFilterModels) {
 			FilterRule filterRule = filterModel.getRule();
@@ -25,7 +41,7 @@ public class MemoryFilterUtils {
     			addBeanPredicate(predicateList, filterModel, getPredicateForRule(filterModel.getType(), filterRule));    			
 			}
 			//filter by selected values
-			ListModelList distinctValues = filterModel.getDistinctValues();
+			ListModelList<?> distinctValues = filterModel.getDistinctValues();
 			if (distinctValues != null) {				
 				addBeanPredicate(predicateList, filterModel, getPredicateDistinctValues(distinctValues.getSelection()));
 			}
@@ -36,7 +52,6 @@ public class MemoryFilterUtils {
 	    return allPredicate;
     }
 
-
 	private static void addBeanPredicate(ArrayList<BeanPredicate> predicateList,
             FilterModel<?> filterModel, Predicate predicateForRule) {
 	    if (predicateForRule != null) {
@@ -45,7 +60,7 @@ public class MemoryFilterUtils {
 	    }
     }
 
-	private static Predicate getPredicateDistinctValues(Set distinctValues) {
+	private static Predicate getPredicateDistinctValues(Set<?> distinctValues) {
 		if (distinctValues != null && !distinctValues.isEmpty()) {
 			return new MemberPredicate(distinctValues);
 		}
@@ -55,41 +70,52 @@ public class MemoryFilterUtils {
 	private static Predicate getPredicateForRule(String type, FilterRule rule) {
 		String ruleName = rule.getName();
 		String ruleValue = (String) rule.getValue();
+		
+		// string filters
 		if("string".equals(type)) {
-			if ("begin".equals(ruleName)) {
-    			return new BeginPredicate(ruleValue);
-    		}
-//    		if ("end".equals(ruleName)) {
-//    			predicates.put("name", new EndPredicate(ruleValue));
-//    		}
-//    		if ("notcontain".equals(ruleName)) {			
-//    			predicates.put("name", new NotPredicate(new ContainPredicate(ruleValue)));
-//    		}
-//    		if ("contain".equals(ruleName)) {
-//    			predicates.put("name", new ContainPredicate(ruleValue));
-//    		}
-		} else if("number".equals(type)) {
-			Integer value = Integer.parseInt(ruleValue);
-			
-			// number filters
 			if ("equal".equals(ruleName)) {
-				return new EqualPredicate(value);
+				return EqualPredicate.getInstance(ruleValue);
 			}
-//			if ("notequal".equals(ruleName)) {
-//				predicates.put("number", new NotPredicate(new EqualPredicate(value)));
-//			}
+			if ("notequal".equals(ruleName)) {
+				return NotPredicate.getInstance(EqualPredicate.getInstance(ruleValue));
+			}
+			
+			if ("begin".equals(ruleName)) {
+    			return BeginPredicate.getInstance(ruleValue);
+    		}
+    		if ("end".equals(ruleName)) {
+    			return EndPredicate.getInstance(ruleValue);
+    		}
+    		if ("notcontain".equals(ruleName)) {			
+    			return NotPredicate.getInstance(ContainPredicate.getInstance(ruleValue));
+    		}
+    		if ("contain".equals(ruleName)) {
+    			return new ContainPredicate(ruleValue);
+    		}
+		} 
+		// number filters
+		else if("number".equals(type)) {
+			Number value = null;
+			if (ruleValue != null) value = new BigDecimal(ruleValue);
+			
+			if ("equal".equals(ruleName)) {
+				return NumberEqualPredicate.getInstance(value);
+			}
+			if ("notequal".equals(ruleName)) {
+				return NotPredicate.getInstance(EqualPredicate.getInstance(value));
+			}
 			if ("greater".equals(ruleName)) {
-				return new GreaterPredicate(value);
+				return GreaterPredicate.getInstance(value);
 			}
-//			if ("notless".equals(ruleName)) {
-//				predicates.put("number", new NotPredicate(new LessPredicate(value)));
-//			}
-//			if ("less".equals(ruleName)) {
-//				predicates.put("number", new LessPredicate(value));
-//			}
-//			if ("notgreater".equals(ruleName)) {
-//				predicates.put("number", new NotPredicate(new GreaterPredicate(value)));
-//			}
+			if ("notless".equals(ruleName)) {
+				return NotPredicate.getInstance(LessPredicate.getInstance(value));
+			}
+			if ("less".equals(ruleName)) {
+				return LessPredicate.getInstance(value);
+			}
+			if ("notgreater".equals(ruleName)) {
+				return NotPredicate.getInstance(GreaterPredicate.getInstance(value));
+			}
 
 		}
 		return null;

@@ -7,7 +7,7 @@
 					<comboitem label="@load(ruleName)" value="@load(ruleName)"/>
 				</template>				
 			</combobox>
-			<textbox value="@bind(model.rule.value)"/>
+			<textbox value="@bind(model.rule.value)" hflex="1"/>
 		</hlayout>
 		<listbox checkmark="true" height="150px" model="@bind(model.distinctValues)" visible="@load(not empty model.distinctValues)">
 			<custom-attributes org.zkoss.zul.listbox.rod="false" />
@@ -20,8 +20,8 @@
 			</template>
 		</listbox>
 		<hlayout height="26px">
-			<button label="OK" forward="onClick = onFilterChanged(${model})" onClick='self.parent.parent.parent.close()'/>
-			<button label="Cancel"/>
+			<button label="OK" forward="onClick = onFilterChanged(${model})" onClick="self.parent.parent.parent.close();"/>
+			<button label="Cancel" onClick="self.parent.parent.parent.close();"/>
 		</hlayout>
 	</vlayout>
 </popup>

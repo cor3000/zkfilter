@@ -1,5 +1,5 @@
 <vlayout apply="org.zkoss.bind.BindComposer"
-	viewModel="@id('vm') @init('demo.TestFilterDialogViewModel')">
+	viewModel="@id('vm') @init('demo.vm.MemoryFilteringViewModel')">
 	<listbox model="@load(vm.model)">
 		<listhead>
 			<listheader label="Number">
@@ -9,6 +9,9 @@
 					onFilterCleared="@command('clearFilter', model=event.data)"/>
 			</listheader>
 			<listheader label="String">
+<!-- TODO			 -->
+<!-- 				<filterConfig  -->
+<!-- 					model="${vm.availFilterModels['string']}"  -->
 				<filterConfig 
 					model="${vm.stringFilterModel}" 
 					onFilterChanged="@command('applyFilter', model=event.data)"
@@ -22,14 +25,19 @@
 			</listitem>
 		</template>
 	</listbox>
-	<!-- 
 	<grid model="@load(vm.model)">
-		<columns menupopup="auto">
+		<columns>
 			<column label="Number" sort="auto">
-				<filterConfig type="number"/>
+				<filterConfig 
+					model="${vm.numberFilterModel}"
+					onFilterChanged="@command('applyFilter', model=event.data)"
+					onFilterCleared="@command('applyFilter', model=event.data)"/>
 			</column>
 			<column label="String" sort="auto">
-				<filterConfig type="string"/>
+				<filterConfig 
+					model="${vm.stringFilterModel}"
+					onFilterChanged="@command('applyFilter', model=event.data)"
+					onFilterCleared="@command('applyFilter', model=event.data)"/>
 			</column>			
 		</columns>
 		<template name="model" var="item">
@@ -39,5 +47,4 @@
 			</row>
 		</template>
 	</grid>	
-	 -->
 </vlayout>

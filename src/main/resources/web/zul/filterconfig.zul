@@ -2,9 +2,7 @@
 <div>
 	<custom-attributes model="${arg.model}"/>	
 	<button iconSclass="z-icon-filter" popup="${model.filterId}_popup, position=after_start"/>
-<!-- 	<include src="~./zul/stringFilterPopup.zul" /> -->
-	<div children="@load(model) @template(model.type)">
-		<template name="string" src="~./zul/stringFilterPopup.zul"/>
-		<template name="number" src="~./zul/stringFilterPopup.zul"/>
+	<div children="@load(model) @template('default')">
+		<template name="default" src="~./zul/defaultFilterPopup.zul"/>
 	</div>
 </div>

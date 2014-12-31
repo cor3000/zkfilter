@@ -1,4 +1,4 @@
-package demo;
+package demo.model;
 
 public class Item {
 	private String name;
