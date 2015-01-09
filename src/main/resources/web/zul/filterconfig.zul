@@ -1,5 +1,4 @@
-<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<div>
+<div style="display: inline-block; float: right">
 	<custom-attributes model="${arg.model}"/>	
 	<button iconSclass="z-icon-filter" popup="${model.filterId}_popup, position=after_start"/>
 	<div children="@load(model) @template('default')">

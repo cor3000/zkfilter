@@ -13,7 +13,7 @@ public class MemberPredicate implements Predicate {
     }
 
 	public boolean evaluate(Object object) {
-		return matching.contains(object.toString());
+		return matching.contains(object);
 	}
 
 }

@@ -6,7 +6,7 @@
 		<zk-version>7.0.4</zk-version><!-- or later -->
 	</version>
     
-	<language-name>xul/html</language-name>	
+	<language-name>xul/html</language-name>
 	<component>
 		<component-name>filterConfig</component-name>
 		<macro-uri>~./zul/filterConfig.zul</macro-uri>

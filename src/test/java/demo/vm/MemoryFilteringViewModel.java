@@ -1,7 +1,6 @@
 package demo.vm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,98 +12,164 @@ import org.apache.commons.collections.Predicate;
 import org.zkoss.addon.filter.FilterModel;
 import org.zkoss.addon.filter.MemoryFilterUtils;
 import org.zkoss.addon.filter.impl.FilterModelImpl;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.gmaps.Gmaps;
+import org.zkoss.gmaps.Gmarker;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.ListModelList;
 
-import demo.model.Item;
+import demo.model.CrimeRecord;
+import demo.service.CrimeRecordService;
 
 public class MemoryFilteringViewModel {
 	
-	private List<Item> completeList;
-	
-	private ListModelList<Item> model;
-	
-	// XXX: inject service here!
-	// private DataService ds = new InMemoryDataServer();
-	/**
-	 * TODO: a list of filter models, one for each column
-	 * should be generated based on bean class
-	 */
-	
-	private FilterModel<String> stringFilterModel;
-	private FilterModel<Number> numberFilterModel;
+	@Wire
+	private Gmaps map;
+
+	private static final int LIMIT = 1000;
+
+	private CrimeRecordService service = new CrimeRecordService();
+
+	private List<CrimeRecord> completeList;
+	private ListModelList<CrimeRecord> crimeRecords = new ListModelList<CrimeRecord>();
 
 	private Map<String, FilterModel<?>> availFilterModels = new HashMap<String, FilterModel<?>>();
+	
+	private String captionLabel;
+	private int fromIndex;
+	private int toIndex;
+	private int totalRecords;
+
+	public String getCaptionLabel() {
+		return captionLabel;
+	}
+
 	private Set<FilterModel<?>> activeFilterModels = new HashSet<FilterModel<?>>();
+	
+	@AfterCompose
+	public void doAfterCompose(@ContextParam(ContextType.VIEW) Component view) {
+		Selectors.wireComponents(view, this, true);
+	}
 	
 	@Init
 	public void init() {
-		// TODO: Load data from service
 		// prepare model for unfiltered data
-		completeList = Arrays.asList(
-			new Item("Alice", 1),
-			new Item("Alice", 2),
-			new Item("Allen", 2),
-			new Item("Apple", 3),
-			new Item("Betty", 1),
-			new Item("Ben", 2),
-			new Item("Charlie", 1),
-			new Item("Carl", 2),
-			new Item("Dennis", 3),
-			new Item("Eric", 4));		
-		model = new ListModelList<Item>(completeList);
-
-		// 
-		Set<String> strings = null;
-        try {
-	        strings = MemoryFilterUtils.<String>getDistinctValues(completeList, "name");
-        } catch (Exception e) {
-	        e.printStackTrace();
-        }
+		totalRecords = service.loadData().size();		
+		updateRange(0);
 		
-        // TODO: have another service method to return possible filter models 
-		stringFilterModel = new FilterModelImpl<String>("name", "string", strings);
-		numberFilterModel = new FilterModelImpl<Number>("number", "number", null);
-		
-		availFilterModels.put(stringFilterModel.getFilterId(), stringFilterModel);
-		availFilterModels.put(numberFilterModel.getFilterId(), numberFilterModel);		
+		availFilterModels = service.getAvailFilterModels(completeList);
 	}
 	
-    @Command
+    @Command("applyFilter")
+    @NotifyChange("crimeRecords")
 	public void applyFilter(@BindingParam("model") FilterModelImpl<?> model) {
     	activeFilterModels.add(model);
 		
 		filterData();
 	}
     
-    @Command
+    @Command("clearFilter")
     public void clearFilter(@BindingParam("model") FilterModel<?> model) {
     	activeFilterModels.remove(model);
     	
     	filterData();
     }
+    
+    @Command("first")
+    @NotifyChange({"model", "captionLabel"})
+    public void gotoFirstPage() {	
+		updateRange(0);
+    }
+    
+    @Command("prev")
+    @NotifyChange({"crimeRecords", "captionLabel"})
+    public void gotoPrevPage() {
+    	updateRange(fromIndex - LIMIT);
+    }
 
+    @Command("next")
+    @NotifyChange({"crimeRecords", "captionLabel"})
+    public void gotoNextPage() {
+    	updateRange(fromIndex + LIMIT);
+    }
+    
+    @Command("last")
+    @NotifyChange({"crimeRecords", "captionLabel"})
+    public void gotoLastPage() {
+		updateRange(((totalRecords-1) / LIMIT) * LIMIT);
+    }
+    
+    @Command("showCrimeData")
+    public void showCrimeData(@BindingParam("marker") Gmarker marker) {
+    	if (marker != null)
+    		marker.setOpen(!marker.isOpen());
+    }
+    
+    @Command("locateCrimeData")
+    public void locateCrimeData(@BindingParam("record") Set<CrimeRecord> selectedRecords) {
+    	if (selectedRecords.isEmpty()) return;
+    	
+    	CrimeRecord record = selectedRecords.iterator().next();
+    	int index = crimeRecords.indexOf(record);
+    	
+    	Gmarker marker = (Gmarker) map.getFellowIfAny("marker_" + index);
+    	if (marker != null) marker.setOpen(true);
+    }
+    
+    public String formatCrimeData(CrimeRecord record) {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<ul>");
+    	sb.append("  <li><b>Address: </b>" + record.getAddress() + "</li>");
+    	sb.append("  <li><b>District: </b>" + record.getDistrict() + "</li>");
+    	sb.append("  <li><b>Description: </b>" + record.getDescription() + "</li>");
+    	sb.append("  <li><b>Latitude: </b>" + record.getLatitude() + "</li>");
+    	sb.append("  <li><b>Longitude: </b>" + record.getLongitude() + "</li>");
+    	sb.append("</ul>");
+
+    	return sb.toString();
+    }
 
 	private void filterData() {		
-		ArrayList<Item> filteredList = new ArrayList<Item>(completeList);
+		List<CrimeRecord> filteredList = new ArrayList<CrimeRecord>(completeList);
 		Predicate combinedPredicate = MemoryFilterUtils.createCombinedFilterPredicate(activeFilterModels);
 		CollectionUtils.filter(filteredList, combinedPredicate);
 		
-		model.clear();
-		model.addAll(filteredList);
+		crimeRecords.clear();
+		crimeRecords.addAll(filteredList);
+		
+		if (map != null) map.invalidate();
     }
 
-	public ListModelList<Item> getModel() {
-    	return model;
+	private void updateRange(int fromIndex) {
+		if (fromIndex >= this.totalRecords)
+			return;
+		
+		this.fromIndex = Math.max(0, fromIndex);
+		this.toIndex = Math.min(this.fromIndex + LIMIT, this.totalRecords);
+		
+		captionLabel = 
+			String.format("Crime Records (%d - %d / %d)", 
+			(this.fromIndex+1), this.toIndex, this.totalRecords);
+		
+		completeList = service.loadData(this.fromIndex, this.toIndex);
+		
+		filterData();
+	}
+
+	public ListModelList<CrimeRecord> getCrimeRecords() {
+    	return crimeRecords;
     }
 
-	public FilterModel<String> getStringFilterModel() {
-		return stringFilterModel;
+	public Map<String, FilterModel<?>> getAvailFilterModels() {
+		return availFilterModels;
 	}
-	
-	public FilterModel<Number> getNumberFilterModel() {
-		return numberFilterModel;
-	}
+
 }

@@ -1,0 +1,9 @@
+.banner {
+	background: -webkit-linear-gradient(135deg, #ccc, #00c);
+}
+.footer {
+	background: -webkit-linear-gradient(135deg, #ccc, #0c0);
+}
+.banner, .footer {
+	color: white;
+}

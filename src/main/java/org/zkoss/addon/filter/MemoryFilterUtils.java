@@ -54,10 +54,9 @@ public class MemoryFilterUtils {
 
 	private static void addBeanPredicate(ArrayList<BeanPredicate> predicateList,
             FilterModel<?> filterModel, Predicate predicateForRule) {
-	    if (predicateForRule != null) {
-	    	BeanPredicate beanPredicate = new BeanPredicate(filterModel.getFilterId(), predicateForRule);
-	    	predicateList.add(beanPredicate);    				
-	    }
+		if (predicateForRule != null) {
+			predicateList.add(new BeanPredicate(filterModel.getFilterId(), predicateForRule));    							
+		}
     }
 
 	private static Predicate getPredicateDistinctValues(Set<?> distinctValues) {

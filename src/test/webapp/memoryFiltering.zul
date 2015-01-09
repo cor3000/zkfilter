@@ -1,50 +1,74 @@
-<vlayout apply="org.zkoss.bind.BindComposer"
+<?style src="style/main.css"?>
+<borderlayout xmlns:h="native"
+	height="100%" width="100%"
+	apply="org.zkoss.bind.BindComposer"
 	viewModel="@id('vm') @init('demo.vm.MemoryFilteringViewModel')">
-	<listbox model="@load(vm.model)">
-		<listhead>
-			<listheader label="Number">
-				<filterConfig 
-					model="${vm.numberFilterModel}" 
-					onFilterChanged="@command('applyFilter', model=event.data)"				
-					onFilterCleared="@command('clearFilter', model=event.data)"/>
-			</listheader>
-			<listheader label="String">
-<!-- TODO			 -->
-<!-- 				<filterConfig  -->
-<!-- 					model="${vm.availFilterModels['string']}"  -->
-				<filterConfig 
-					model="${vm.stringFilterModel}" 
-					onFilterChanged="@command('applyFilter', model=event.data)"
-					onFilterCleared="@command('clearFilter', model=event.data)"/>	
-			</listheader>
-		</listhead>
-		<template name="model" var="item">
-			<listitem>
-				<listcell label="@load(item.number)"/>
-				<listcell label="@load(item.name)"/>
-			</listitem>
-		</template>
-	</listbox>
-	<grid model="@load(vm.model)">
-		<columns>
-			<column label="Number" sort="auto">
-				<filterConfig 
-					model="${vm.numberFilterModel}"
-					onFilterChanged="@command('applyFilter', model=event.data)"
-					onFilterCleared="@command('applyFilter', model=event.data)"/>
-			</column>
-			<column label="String" sort="auto">
-				<filterConfig 
-					model="${vm.stringFilterModel}"
-					onFilterChanged="@command('applyFilter', model=event.data)"
-					onFilterCleared="@command('applyFilter', model=event.data)"/>
-			</column>			
-		</columns>
-		<template name="model" var="item">
-			<row>
-				<cell><label value="@load(item.number)"/></cell>
-				<cell><label value="@load(item.name)"/></cell>
-			</row>
-		</template>
-	</grid>	
-</vlayout>
+	<north sclass="banner">
+		<h:h1>Sacramento Crime Scene Locator <h:i class="z-icon-search"/></h:h1>
+	</north>
+	<west size="40%" collapsible="true">
+		<caption label="@load(vm.captionLabel)">
+			<button iconSclass="z-icon-fast-backward" onClick="@command('first')"/>
+			<button iconSclass="z-icon-step-backward" onClick="@command('prev')"/>
+			<button iconSclass="z-icon-step-forward" onClick="@command('next')"/>
+			<button iconSclass="z-icon-fast-forward" onClick="@command('last')"/>
+		</caption>
+		<listbox model="@load(vm.crimeRecords)" mold="paging" autopaging="true" hflex="1"
+			onSelect="@command('locateCrimeData', record=event.selectedObjects)">
+			<listhead sizable="true">
+				<listheader label="Address" width="150px">
+					<filterConfig style="float:right"
+						model="${vm.availFilterModels['address']}" 
+						onFilterChanged="@command('applyFilter', model=event.data)"				
+						onFilterCleared="@command('clearFilter', model=event.data)"/>
+				</listheader>
+				<listheader label="District" width="100px">
+					<filterConfig style="float:right"
+						model="${vm.availFilterModels['district']}" 
+						onFilterChanged="@command('applyFilter', model=event.data)"
+						onFilterCleared="@command('clearFilter', model=event.data)"/>	
+				</listheader>
+				<listheader label="Description" width="220px">
+					<filterConfig style="float:right"
+						model="${vm.availFilterModels['description']}"
+						onFilterChanged="@command('applyFilter', model=event.data)"
+						onFilterCleared="@command('clearFilter', model=event.data)"/>	
+				</listheader>
+				<listheader label="Latitude" hflex="1">
+					<filterConfig style="float:right"
+						model="${vm.availFilterModels['latitude']}"
+						onFilterChanged="@command('applyFilter', model=event.data)"
+						onFilterCleared="@command('clearFilter', model=event.data)"/>	
+				</listheader>
+				<listheader label="Longitude" hflex="1">
+					<filterConfig style="float:right"
+						model="${vm.availFilterModels['longitude']}"
+						onFilterChanged="@command('applyFilter', model=event.data)"
+						onFilterCleared="@command('clearFilter', model=event.data)"/>	
+				</listheader>
+			</listhead>
+			<template name="model" var="record">
+				<listitem>
+					<listcell label="@load(record.address)"/>
+					<listcell label="@load(record.district)"/>
+					<listcell label="@load(record.description)"/>
+					<listcell label="@load(record.latitude)"/>
+					<listcell label="@load(record.longitude)"/>
+				</listitem>
+			</template>
+		</listbox>
+	</west>
+	<center>
+		<gmaps id="map" width="100%" height="100%" children="@load(vm.crimeRecords)" 
+			lat="38.6" lng="-121.5" zoom="11" onMapClick="@command('showCrimeData', marker=event.gmarker)">
+			<template name="children" var="record">
+				<gmarker id="marker_${recordStatus.index}"
+					lat="@load(record.latitude)" lng="@load(record.longitude)"
+					content="@load(vm.formatCrimeData(record))" />
+			</template>
+		</gmaps>
+	</center>
+	<south sclass="footer">
+		<h:h4><h:center><![CDATA[Powered by ZK &copy; 2015-]]></h:center></h:h4>
+	</south>
+</borderlayout>
