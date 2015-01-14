@@ -28,7 +28,5 @@ public class FilterRule {
     public String toString() {
 	    return "FilterRule [name=" + name + ", value=" + value + "]";
     }
-	
-	
 
 }

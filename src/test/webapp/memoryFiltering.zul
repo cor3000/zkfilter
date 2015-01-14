@@ -7,12 +7,7 @@
 		<h:h1>Sacramento Crime Scene Locator <h:i class="z-icon-search"/></h:h1>
 	</north>
 	<west size="40%" collapsible="true">
-		<caption label="@load(vm.captionLabel)">
-			<button iconSclass="z-icon-fast-backward" onClick="@command('first')"/>
-			<button iconSclass="z-icon-step-backward" onClick="@command('prev')"/>
-			<button iconSclass="z-icon-step-forward" onClick="@command('next')"/>
-			<button iconSclass="z-icon-fast-forward" onClick="@command('last')"/>
-		</caption>
+		<caption label="@load(vm.captionLabel)"/>
 		<listbox model="@load(vm.crimeRecords)" mold="paging" autopaging="true" hflex="1"
 			onSelect="@command('locateCrimeData', record=event.selectedObjects)">
 			<listhead sizable="true">

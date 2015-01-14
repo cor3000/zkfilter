@@ -39,9 +39,5 @@ public class CrimeRecordDao {
 	public List<CrimeRecord> getRecords() {
 		return records;
 	}
-	
-	public List<CrimeRecord> getRecords(int fromIndex, int toIndex) {
-		return records.subList(fromIndex, toIndex);
-	}
-	
+
 }

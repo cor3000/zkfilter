@@ -10,7 +10,7 @@ public class LessPredicate implements Predicate {
 	public static Predicate getInstance(Number value) {
 		if (value == null)
 			return NullPredicate.INSTANCE;
-		return null;
+		return new LessPredicate(value);
 	}
 
 	public LessPredicate(Number value) {
@@ -24,6 +24,5 @@ public class LessPredicate implements Predicate {
 		Number number = (Number) object;
 		return (number.doubleValue() < value.doubleValue());
 	}
-
 
 }

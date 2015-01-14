@@ -44,9 +44,6 @@ public class MemoryFilteringViewModel {
 	private Map<String, FilterModel<?>> availFilterModels = new HashMap<String, FilterModel<?>>();
 	
 	private String captionLabel;
-	private int fromIndex;
-	private int toIndex;
-	private int totalRecords;
 
 	public String getCaptionLabel() {
 		return captionLabel;
@@ -62,14 +59,14 @@ public class MemoryFilteringViewModel {
 	@Init
 	public void init() {
 		// prepare model for unfiltered data
-		totalRecords = service.loadData().size();		
-		updateRange(0);
-		
+		completeList = service.loadData();		
 		availFilterModels = service.getAvailFilterModels(completeList);
+		
+		filterData();
 	}
 	
     @Command("applyFilter")
-    @NotifyChange("crimeRecords")
+    @NotifyChange({"crimeRecords", "captionLabel"})
 	public void applyFilter(@BindingParam("model") FilterModelImpl<?> model) {
     	activeFilterModels.add(model);
 		
@@ -81,30 +78,6 @@ public class MemoryFilteringViewModel {
     	activeFilterModels.remove(model);
     	
     	filterData();
-    }
-    
-    @Command("first")
-    @NotifyChange({"model", "captionLabel"})
-    public void gotoFirstPage() {	
-		updateRange(0);
-    }
-    
-    @Command("prev")
-    @NotifyChange({"crimeRecords", "captionLabel"})
-    public void gotoPrevPage() {
-    	updateRange(fromIndex - LIMIT);
-    }
-
-    @Command("next")
-    @NotifyChange({"crimeRecords", "captionLabel"})
-    public void gotoNextPage() {
-    	updateRange(fromIndex + LIMIT);
-    }
-    
-    @Command("last")
-    @NotifyChange({"crimeRecords", "captionLabel"})
-    public void gotoLastPage() {
-		updateRange(((totalRecords-1) / LIMIT) * LIMIT);
     }
     
     @Command("showCrimeData")
@@ -143,26 +116,16 @@ public class MemoryFilteringViewModel {
 		CollectionUtils.filter(filteredList, combinedPredicate);
 		
 		crimeRecords.clear();
-		crimeRecords.addAll(filteredList);
 		
-		if (map != null) map.invalidate();
+		int limit = Math.min(filteredList.size(), LIMIT);
+		crimeRecords.addAll(filteredList.subList(0, limit));
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(filteredList.size() + " crime Records");
+		if (filteredList.size() > limit)
+			sb.append(", showing only the fist " + limit + " records");
+		captionLabel = sb.toString();
     }
-
-	private void updateRange(int fromIndex) {
-		if (fromIndex >= this.totalRecords)
-			return;
-		
-		this.fromIndex = Math.max(0, fromIndex);
-		this.toIndex = Math.min(this.fromIndex + LIMIT, this.totalRecords);
-		
-		captionLabel = 
-			String.format("Crime Records (%d - %d / %d)", 
-			(this.fromIndex+1), this.toIndex, this.totalRecords);
-		
-		completeList = service.loadData(this.fromIndex, this.toIndex);
-		
-		filterData();
-	}
 
 	public ListModelList<CrimeRecord> getCrimeRecords() {
     	return crimeRecords;

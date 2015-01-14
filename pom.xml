@@ -23,6 +23,11 @@
     </licenses>
     <repositories>
         <repository>
+            <id>ZK Public Repository</id>
+            <name>ZK CE Repository</name>
+            <url>http://mavensync.zkoss.org/eval</url>
+        </repository>
+        <repository>
             <id>ZK EVAL</id>
             <name>ZK Evaluation Repository</name>
             <url>http://mavensync.zkoss.org/eval</url>
@@ -48,18 +53,6 @@
             <version>${zk.version}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zkplus</artifactId>
-            <version>${zk.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zhtml</artifactId>
-            <version>${zk.version}</version>
-            <optional>true</optional>
-        </dependency>
         
         <!-- ZK EE -->
         <dependency>
@@ -68,7 +61,7 @@
             <version>${zk.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- ZK Google Maps -->
         <dependency>
         	<groupId>org.zkoss.zkforge</groupId>

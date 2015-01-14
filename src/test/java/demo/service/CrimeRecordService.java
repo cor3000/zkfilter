@@ -28,11 +28,6 @@ public class CrimeRecordService {
 		return dao.getRecords();
 	}
 	
-	public List<CrimeRecord> loadData(int fromIndex, int toIndex) {
-	    return dao.getRecords(fromIndex, toIndex);
-	}
-
-
 	public Map<String, FilterModel<?>> getAvailFilterModels(List<?> completeList) {
 		Map<String, FilterModel<?>> availFilterModels = new HashMap<String, FilterModel<?>>();
 
@@ -48,6 +43,5 @@ public class CrimeRecordService {
 		
 		return availFilterModels;
 	}
-
 	
 }
