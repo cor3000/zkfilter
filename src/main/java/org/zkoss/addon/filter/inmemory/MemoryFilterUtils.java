@@ -1,4 +1,4 @@
-package org.zkoss.addon.filter;
+package org.zkoss.addon.filter.inmemory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,13 +13,8 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.collections.functors.NotPredicate;
-import org.zkoss.addon.filter.impl.BeginPredicate;
-import org.zkoss.addon.filter.impl.ContainPredicate;
-import org.zkoss.addon.filter.impl.EndPredicate;
-import org.zkoss.addon.filter.impl.GreaterPredicate;
-import org.zkoss.addon.filter.impl.LessPredicate;
-import org.zkoss.addon.filter.impl.MemberPredicate;
-import org.zkoss.addon.filter.impl.NumberEqualPredicate;
+import org.zkoss.addon.filter.FilterModel;
+import org.zkoss.addon.filter.FilterRule;
 import org.zkoss.zul.ListModelList;
 
 public class MemoryFilterUtils {

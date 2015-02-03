@@ -1,4 +1,4 @@
-package org.zkoss.addon.filter.impl;
+package org.zkoss.addon.filter.inmemory;
 
 import java.util.Set;
 

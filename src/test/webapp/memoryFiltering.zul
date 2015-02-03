@@ -8,8 +8,8 @@
 	</north>
 	<west size="40%" collapsible="true">
 		<caption label="@load(vm.captionLabel)"/>
-		<listbox model="@load(vm.crimeRecords)" mold="paging" autopaging="true" hflex="1"
-			onSelect="@command('locateCrimeData', record=event.selectedObjects)">
+		<listbox model="@load(vm.crimeRecords)" mold="paging" hflex="1" vflex="1"
+			onSelect="@command('showCrimeData', record=event.selectedObjects.iterator().next())">
 			<listhead sizable="true">
 				<listheader label="Address" width="150px">
 					<filterConfig style="float:right"
@@ -42,24 +42,23 @@
 						onFilterCleared="@command('clearFilter', model=event.data)"/>	
 				</listheader>
 			</listhead>
-			<template name="model" var="record">
+			<template name="model">
 				<listitem>
-					<listcell label="@load(record.address)"/>
-					<listcell label="@load(record.district)"/>
-					<listcell label="@load(record.description)"/>
-					<listcell label="@load(record.latitude)"/>
-					<listcell label="@load(record.longitude)"/>
+					<listcell label="@load(each.record.address)"/>
+					<listcell label="@load(each.record.district)"/>
+					<listcell label="@load(each.record.description)"/>
+					<listcell label="@load(each.record.latitude)"/>
+					<listcell label="@load(each.record.longitude)"/>
 				</listitem>
 			</template>
 		</listbox>
 	</west>
 	<center>
 		<gmaps id="map" width="100%" height="100%" children="@load(vm.crimeRecords)" 
-			lat="38.6" lng="-121.5" zoom="11" onMapClick="@command('showCrimeData', marker=event.gmarker)">
-			<template name="children" var="record">
-				<gmarker id="marker_${recordStatus.index}"
-					lat="@load(record.latitude)" lng="@load(record.longitude)"
-					content="@load(vm.formatCrimeData(record))" />
+			lat="38.6" lng="-121.5" zoom="11" onMapClick="@command('showCrimeData', record=event.gmarker.attributes['each'])">
+			<template name="children">
+				<gmarker lat="@load(each.record.latitude)" lng="@load(each.record.longitude)"
+					open="@load(each.open)" content="@load(each.markerText)" />
 			</template>
 		</gmaps>
 	</center>
