@@ -64,6 +64,7 @@ public class MemoryFilteringViewModel {
     
     @Command("showCrimeData")    
     public void showCrimeData(@BindingParam("record") UiCrimeRecord record) {
+    	if (record == null) return;
     	record.setOpen(!record.isOpen());
     	BindUtils.postNotifyChange(null, null, record, "open");
     }
