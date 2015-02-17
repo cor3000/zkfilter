@@ -24,10 +24,9 @@ public class MemoryFilteringViewModel {
 
 	private CrimeRecordService service = new CrimeRecordService();
 
-	private List<CrimeRecord> completeList;
 	private ListModelList<UiCrimeRecord> crimeRecords = new ListModelList<UiCrimeRecord>();
 
-	private Map<String, FilterModel<?>> availFilterModels = new HashMap<String, FilterModel<?>>();
+	private Map<String, FilterModel<?>> availableFilterModels = null;
 	
 	private String captionLabel;
 
@@ -40,9 +39,7 @@ public class MemoryFilteringViewModel {
 	@Init
 	public void init() {
 		// prepare model for unfiltered data
-		completeList = service.loadData();		
-		availFilterModels = service.getAvailFilterModels(completeList);
-		
+		availableFilterModels = service.getAvailableFilterModels();
 		filterData();
 	}
 	
@@ -50,7 +47,6 @@ public class MemoryFilteringViewModel {
     @NotifyChange({"crimeRecords", "captionLabel"})
 	public void applyFilter(@BindingParam("model") FilterModelImpl<?> model) {
     	activeFilterModels.add(model);
-		
 		filterData();
 	}
     
@@ -58,7 +54,6 @@ public class MemoryFilteringViewModel {
     @NotifyChange({"crimeRecords", "captionLabel"})
     public void clearFilter(@BindingParam("model") FilterModel<?> model) {
     	activeFilterModels.remove(model);
-    	
     	filterData();
     }
     
@@ -88,8 +83,8 @@ public class MemoryFilteringViewModel {
     	return crimeRecords;
     }
 
-	public Map<String, FilterModel<?>> getAvailFilterModels() {
-		return availFilterModels;
+	public Map<String, FilterModel<?>> getAvailableFilterModels() {
+		return availableFilterModels;
 	}
 
 }

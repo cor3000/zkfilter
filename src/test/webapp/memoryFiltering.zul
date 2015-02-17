@@ -6,41 +6,23 @@
 	<north sclass="banner">
 		<h:h1>Sacramento Crime Scene Locator <h:i class="z-icon-search"/></h:h1>
 	</north>
-	<west size="40%" collapsible="true">
+	<west size="50%" collapsible="true">
 		<caption label="@load(vm.captionLabel)"/>
 		<listbox model="@load(vm.crimeRecords)" mold="paging" hflex="1" vflex="1"
-			onSelect="@command('showCrimeData', record=event.selectedObjects.iterator().next())">
-			<listhead sizable="true">
-				<listheader label="Address" width="150px">
-					<filterConfig style="float:right"
-						model="${vm.availFilterModels['address']}" 
-						onFilterChanged="@command('applyFilter', model=event.data)"				
-						onFilterCleared="@command('clearFilter', model=event.data)"/>
-				</listheader>
-				<listheader label="District" width="100px">
-					<filterConfig style="float:right"
-						model="${vm.availFilterModels['district']}" 
-						onFilterChanged="@command('applyFilter', model=event.data)"
-						onFilterCleared="@command('clearFilter', model=event.data)"/>	
-				</listheader>
-				<listheader label="Description" width="220px">
-					<filterConfig style="float:right"
-						model="${vm.availFilterModels['description']}"
-						onFilterChanged="@command('applyFilter', model=event.data)"
-						onFilterCleared="@command('clearFilter', model=event.data)"/>	
-				</listheader>
-				<listheader label="Latitude" hflex="1">
-					<filterConfig style="float:right"
-						model="${vm.availFilterModels['latitude']}"
-						onFilterChanged="@command('applyFilter', model=event.data)"
-						onFilterCleared="@command('clearFilter', model=event.data)"/>	
-				</listheader>
-				<listheader label="Longitude" hflex="1">
-					<filterConfig style="float:right"
-						model="${vm.availFilterModels['longitude']}"
-						onFilterChanged="@command('applyFilter', model=event.data)"
-						onFilterCleared="@command('clearFilter', model=event.data)"/>	
-				</listheader>
+			onSelect="@command('showCrimeData', record=event.selectedObjects.iterator().next())" >
+			<listhead sizable="true" children="@load(vm.availableFilterModels)">
+				<template name="children" var="header">
+					<listheader label="@load(header.key)" >
+						<template name="test">
+							<label value="test"/>
+						</template>
+						<filterConfig style="float:right"
+							model="${header.value}" 
+							popupTemplate=""
+							onFilterChanged="@command('applyFilter', model=event.data)"				
+							onFilterCleared="@command('clearFilter', model=event.data)"/>
+					</listheader>
+				</template>
 			</listhead>
 			<template name="model">
 				<listitem>

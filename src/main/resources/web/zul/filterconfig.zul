@@ -1,7 +1,7 @@
 <div style="display: inline-block; float: right">
-	<custom-attributes model="${arg.model}"/>	
+	<custom-attributes model="${arg.model}" popupTemplate="${arg.popupTemplate}"/>
 	<button iconSclass="z-icon-filter" popup="${model.filterId}_popup, position=after_start"/>
-	<div children="@load(model) @template('default')">
+	<div children="@load(model) @template(not empty popupTemplate ? popupTemplate : 'default')">
 		<template name="default" src="~./zul/defaultFilterPopup.zul"/>
 	</div>
 </div>
