@@ -1,6 +1,5 @@
 package demo.vm;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,21 +20,12 @@ import demo.service.CrimeRecordService;
 public class MemoryFilteringViewModel {
 	
 	private static final int LIMIT = 200;
-
-	private CrimeRecordService service = new CrimeRecordService();
-
-	private ListModelList<UiCrimeRecord> crimeRecords = new ListModelList<UiCrimeRecord>();
-
-	private Map<String, FilterModel<?>> availableFilterModels = null;
-	
 	private String captionLabel;
+	private CrimeRecordService service = new CrimeRecordService();
+	private ListModelList<UiCrimeRecord> crimeRecords = new ListModelList<UiCrimeRecord>();
+	private Map<String, FilterModel<?>> availableFilterModels = null;
+	private Set<FilterModel<?>> activeFilterModels = new HashSet<FilterModel<?>>();		
 
-	public String getCaptionLabel() {		
-		return captionLabel;
-	}
-
-	private Set<FilterModel<?>> activeFilterModels = new HashSet<FilterModel<?>>();
-		
 	@Init
 	public void init() {
 		// prepare model for unfiltered data
@@ -85,6 +75,10 @@ public class MemoryFilteringViewModel {
 
 	public Map<String, FilterModel<?>> getAvailableFilterModels() {
 		return availableFilterModels;
+	}
+
+	public String getCaptionLabel() {		
+		return captionLabel;
 	}
 
 }

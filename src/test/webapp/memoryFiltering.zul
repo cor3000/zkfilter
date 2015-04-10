@@ -13,12 +13,8 @@
 			<listhead sizable="true" children="@load(vm.availableFilterModels)">
 				<template name="children" var="header">
 					<listheader label="@load(header.key)" >
-						<template name="test">
-							<label value="test"/>
-						</template>
 						<filterConfig style="float:right"
-							model="${header.value}" 
-							popupTemplate=""
+							model="${header.value}"							
 							onFilterChanged="@command('applyFilter', model=event.data)"				
 							onFilterCleared="@command('clearFilter', model=event.data)"/>
 					</listheader>
